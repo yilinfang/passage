@@ -25,7 +25,12 @@ tmpdir() {
 	}
 	trap unmount_tmpdir INT TERM EXIT
 	SECURE_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/$PROGRAM.XXXXXXXXXXXXX")"
-	DARWIN_RAMDISK_DEV="$(hdid -drivekey system-image=yes -nomount 'ram://32768' | cut -d ' ' -f 1)" # 32768 sectors = 16 mb
+	# 32768 sectors = 16 mb
+	if diskutil image attach --help &>/dev/null; then
+		DARWIN_RAMDISK_DEV="$(diskutil image attach --noMount 'ram://32768' | awk '{ print $1; exit }')"
+	else
+		DARWIN_RAMDISK_DEV="$(hdid -drivekey system-image=yes -nomount 'ram://32768' | awk '{ print $1; exit }')"
+	fi
 	[[ -z $DARWIN_RAMDISK_DEV ]] && die "Error: could not create ramdisk."
 	newfs_hfs -M 700 "$DARWIN_RAMDISK_DEV" &>/dev/null || die "Error: could not create filesystem on ramdisk."
 	mount -t hfs -o noatime -o nobrowse "$DARWIN_RAMDISK_DEV" "$SECURE_TMPDIR" || die "Error: could not mount filesystem on ramdisk."
