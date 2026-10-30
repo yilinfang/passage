@@ -8,18 +8,24 @@ See original [README](README).
 
 ## Recommended installation method (macOS)
 
-Make sure that `~/.local/bin` is in your `$PATH`, and that `~/.local/share/zsh/site-functions` is in your `fpath` before `compinit` runs (with oh-my-zsh, before it is sourced):
+Make sure that `~/.local/bin` is in your `$PATH`.
+
+### Zsh completion (optional)
+
+Make sure that `~/.local/share/zsh/site-functions` is in your `fpath` before `compinit` runs (with oh-my-zsh, before it is sourced):
 
 ```zsh
 # in ~/.zshrc
 fpath=(~/.local/share/zsh/site-functions $fpath)
 ```
 
-Then install:
+### Install
+
+This also installs the completion file. It has no effect if you skip the step above.
 
 ```bash
 PREFIX="$HOME/.local" WITH_ZSHCOMP=yes make install
-rm -f "${ZDOTDIR:-$HOME}"/.zcompdump*   # clear the completion cache
+rm -f "${ZDOTDIR:-$HOME}"/.zcompdump*   # clear the completion cache (only needed for zsh completion)
 ```
 
 To uninstall, use the same prefix:
