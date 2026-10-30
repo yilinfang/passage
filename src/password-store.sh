@@ -52,6 +52,10 @@ die() {
 	echo "$@" >&2
 	exit 1
 }
+in_yubikey_dir() {
+	local top="${1%%/*}"
+	[[ $top == yubikey || $top == yubikey-* ]]
+}
 set_age_recipients() {
 	AGE_RECIPIENT_ARGS=( )
 
@@ -350,8 +354,10 @@ cmd_find() {
 
 cmd_grep() {
 	[[ $# -lt 1 ]] && die "Usage: $PROGRAM $COMMAND [GREPOPTIONS] search-string"
-	local passfile grepresults
+	local passfile grepresults has_yubikey=0
+	[[ -n $(age-plugin-yubikey --list 2>/dev/null) ]] && has_yubikey=1
 	while read -r -d "" passfile; do
+		[[ $has_yubikey -eq 0 ]] && in_yubikey_dir "${passfile#$PREFIX/}" && continue
 		grepresults="$($AGE -d -i "$IDENTITIES_FILE" "$passfile" | grep --color=always "$@")"
 		[[ $? -ne 0 ]] && continue
 		passfile="${passfile%.age}"
