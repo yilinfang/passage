@@ -6,6 +6,28 @@ Only macOS is tested.
 
 See original [README](README).
 
+## Recommended installation method (macOS)
+
+Make sure that `~/.local/bin` is in your `$PATH`, and that `~/.local/share/zsh/site-functions` is in your `fpath` before `compinit` runs (with oh-my-zsh, before it is sourced):
+
+```zsh
+# in ~/.zshrc
+fpath=(~/.local/share/zsh/site-functions $fpath)
+```
+
+Then install:
+
+```bash
+PREFIX="$HOME/.local" WITH_ZSHCOMP=yes make install
+rm -f "${ZDOTDIR:-$HOME}"/.zcompdump*   # clear the completion cache
+```
+
+To uninstall, use the same prefix:
+
+```bash
+PREFIX="$HOME/.local" make uninstall
+```
+
 ## Changes in this fork
 
 - `passage grep` skips YubiKey-protected directories when no YubiKey is connected, so it does not prompt once per secret. See [YubiKey directories](#yubikey-directories).
