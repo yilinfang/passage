@@ -7,6 +7,14 @@ Only macOS is tested.
 
 See original [README](README).
 
+## Dependencies (macOS)
+
+- `age` or `rage`
+- `gnu-getopt`
+- `tree`
+- `qrencode`
+- `age-plugin-yubikey` (optional)
+
 ## Recommended installation method (macOS)
 
 Make sure that `~/.local/bin` is in your `$PATH`.
