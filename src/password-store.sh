@@ -12,6 +12,7 @@ PASSAGE="1"
 PREFIX="${PASSAGE_DIR:-$HOME/.passage/store}"
 IDENTITIES_FILE="${PASSAGE_IDENTITIES_FILE:-$HOME/.passage/identities}"
 EXTENSIONS="${PASSAGE_EXTENSIONS_DIR:-$HOME/.passage/extensions}"
+DANGEROUS_GREP_YUBIKEY="${PASSAGE_DANGEROUS_GREP_YUBIKEY:-0}"
 X_SELECTION="${PASSWORD_STORE_X_SELECTION:-clipboard}"
 CLIP_TIME="${PASSWORD_STORE_CLIP_TIME:-45}"
 GENERATED_LENGTH="${PASSWORD_STORE_GENERATED_LENGTH:-25}"
@@ -51,6 +52,10 @@ yesno() {
 die() {
 	echo "$@" >&2
 	exit 1
+}
+in_yubikey_dir() {
+	local top="${1%%/*}"
+	[[ $top == yubikey || $top == yubikey-* ]]
 }
 set_age_recipients() {
 	AGE_RECIPIENT_ARGS=( )
@@ -352,6 +357,7 @@ cmd_grep() {
 	[[ $# -lt 1 ]] && die "Usage: $PROGRAM $COMMAND [GREPOPTIONS] search-string"
 	local passfile grepresults
 	while read -r -d "" passfile; do
+		[[ $DANGEROUS_GREP_YUBIKEY -ne 1 ]] && in_yubikey_dir "${passfile#$PREFIX/}" && continue
 		grepresults="$($AGE -d -i "$IDENTITIES_FILE" "$passfile" | grep --color=always "$@")"
 		[[ $? -ne 0 ]] && continue
 		passfile="${passfile%.age}"
